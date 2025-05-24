@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pharmacy_ASP_API.Models;
 
@@ -10,9 +11,11 @@ using Pharmacy_ASP_API.Models;
 namespace Pharmacy_ASP_API.Migrations
 {
     [DbContext(typeof(PharmacyDbContext))]
-    partial class PharmacyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250524014957_foriegnkey")]
+    partial class foriegnkey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,6 +86,12 @@ namespace Pharmacy_ASP_API.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("OrderId1")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -96,6 +105,11 @@ namespace Pharmacy_ASP_API.Migrations
 
                     b.HasKey("RequestId");
 
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("OrderId1");
+
                     b.ToTable("MedicationRequests");
                 });
 
@@ -108,7 +122,7 @@ namespace Pharmacy_ASP_API.Migrations
                     b.Property<Guid>("MedicationId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("MedicationRequestId")
+                    b.Property<Guid>("MedicationRequestId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("OrderTime")
@@ -129,9 +143,6 @@ namespace Pharmacy_ASP_API.Migrations
                     b.HasKey("OrderId");
 
                     b.HasIndex("MedicationId");
-
-                    b.HasIndex("MedicationRequestId")
-                        .IsUnique();
 
                     b.HasIndex("PatientId");
 
@@ -222,6 +233,21 @@ namespace Pharmacy_ASP_API.Migrations
                     b.Navigation("Stock");
                 });
 
+            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationRequest", b =>
+                {
+                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Order", null)
+                        .WithOne("MedicationRequest")
+                        .HasForeignKey("Pharmacy_ASP_API.Models.Entities.MedicationRequest", "OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId1");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Order", b =>
                 {
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", "Medication")
@@ -229,11 +255,6 @@ namespace Pharmacy_ASP_API.Migrations
                         .HasForeignKey("MedicationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationRequest", "MedicationRequest")
-                        .WithOne("Order")
-                        .HasForeignKey("Pharmacy_ASP_API.Models.Entities.Order", "MedicationRequestId")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.Patient", "Patient")
                         .WithMany("Orders")
@@ -255,8 +276,6 @@ namespace Pharmacy_ASP_API.Migrations
 
                     b.Navigation("Medication");
 
-                    b.Navigation("MedicationRequest");
-
                     b.Navigation("Patient");
 
                     b.Navigation("Report");
@@ -269,14 +288,11 @@ namespace Pharmacy_ASP_API.Migrations
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationRequest", b =>
-                {
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Order", b =>
                 {
                     b.Navigation("MedicationKnowledges");
+
+                    b.Navigation("MedicationRequest");
                 });
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Patient", b =>

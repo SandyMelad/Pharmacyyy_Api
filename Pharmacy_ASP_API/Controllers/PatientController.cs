@@ -40,16 +40,39 @@ namespace Pharmacy_ASP_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Patient>> CreatePatient([FromBody] Patient patient)
         {
+            if (patient == null)
+            {
+                return BadRequest(new { Message = "Patient data is required." });
+            }
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(new { Message = "Validation failed.", Errors = errors });
             }
 
             try
             {
-                patient.PatientId = Guid.NewGuid(); // Ensure a new ID is generated
+                // Ensure required fields are present
+                if (string.IsNullOrWhiteSpace(patient.PatientName))
+                {
+                    return BadRequest(new { Message = "Patient name is required." });
+                }
+
+                if (string.IsNullOrWhiteSpace(patient.PhoneNo))
+                {
+                    return BadRequest(new { Message = "Phone number is required." });
+                }
+
+                // Set default values
+                patient.PatientId = Guid.NewGuid();
+                patient.Orders = new List<Order>();
+
                 await _patientRepository.AddAsync(patient);
-                return Ok(patient);
+                return CreatedAtAction(nameof(GetPatient), new { id = patient.PatientId }, patient);
             }
             catch (Exception ex)
             {
@@ -61,20 +84,32 @@ namespace Pharmacy_ASP_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePatient(Guid id, [FromBody] Patient patient)
         {
+            if (patient == null)
+            {
+                return BadRequest(new { Message = "Patient data is required." });
+            }
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(new { Message = "Validation failed.", Errors = errors });
             }
 
             if (id != patient.PatientId)
             {
-                return BadRequest(new { Message = "Patient ID in URL must match Patient ID in body." });
+                return BadRequest(new { 
+                    Message = "Patient ID mismatch.", 
+                    Details = $"The ID in the URL ({id}) does not match the ID in the request body ({patient.PatientId}). Please ensure both IDs are the same."
+                });
             }
 
             try
             {
                 await _patientRepository.UpdateAsync(patient, id);
-                return Ok();
+                return NoContent();
             }
             catch (KeyNotFoundException)
             {
@@ -93,7 +128,7 @@ namespace Pharmacy_ASP_API.Controllers
             try
             {
                 await _patientRepository.DeleteAsync(id);
-                return Ok();
+                return NoContent();
             }
             catch (KeyNotFoundException)
             {

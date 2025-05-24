@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Pharmacy_ASP_API.Models.Entities
 {
@@ -23,9 +24,8 @@ namespace Pharmacy_ASP_API.Models.Entities
         public DateTime DateOfBirth { get; set; }
         public Gender Gender { get; set; }
 
-        //Relations 
-        public ICollection<Order> Orders { get; set; }
-        public ICollection<Finance> Finances { get; set; } //One Patient can have:Many Orders(they ordered many medications)
+        [JsonIgnore]
+        public virtual ICollection<Order>? Orders { get; set; } = new List<Order>();
                                                            //Many Finance records(they have multiple bills/financial reports)
     }
 

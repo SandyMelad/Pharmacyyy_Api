@@ -19,7 +19,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddScoped<IRepositories<Finance>, FinanceRepo>();
 builder.Services.AddScoped<IRepositories<MedicationKnowledge>, MedicationKnowledgeRepo>();
 builder.Services.AddScoped<IRepositories<MedicationRequest>, MedicationRequestRepo>();
 builder.Services.AddScoped<IRepositories<Order>, OrderRepo>();

@@ -11,8 +11,8 @@ using Pharmacy_ASP_API.Models;
 namespace Pharmacy_ASP_API.Migrations
 {
     [DbContext(typeof(PharmacyDbContext))]
-    [Migration("20250523013320_in")]
-    partial class @in
+    [Migration("20250524013830_fourth")]
+    partial class fourth
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,63 +21,6 @@ namespace Pharmacy_ASP_API.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            modelBuilder.Entity("FinanceReport", b =>
-                {
-                    b.Property<Guid>("ReportsReportId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("FinancesReportId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("FinancesOrderId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("FinancesPatientId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("ReportsReportId", "FinancesReportId", "FinancesOrderId", "FinancesPatientId");
-
-                    b.HasIndex("FinancesReportId", "FinancesOrderId", "FinancesPatientId");
-
-                    b.ToTable("FinanceReport");
-                });
-
-            modelBuilder.Entity("MedicationKnowledgeOrder", b =>
-                {
-                    b.Property<Guid>("MedicationKnowledgesMedicationId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("OrdersOrderId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("MedicationKnowledgesMedicationId", "OrdersOrderId");
-
-                    b.HasIndex("OrdersOrderId");
-
-                    b.ToTable("MedicationKnowledgeOrders", (string)null);
-                });
-
-            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Finance", b =>
-                {
-                    b.Property<Guid>("ReportId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("ReportDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("ReportId", "OrderId", "PatientId");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("Finances");
-                });
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", b =>
                 {
@@ -99,6 +42,9 @@ namespace Pharmacy_ASP_API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("ProductType")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -111,6 +57,8 @@ namespace Pharmacy_ASP_API.Migrations
                         .HasColumnType("char(36)");
 
                     b.HasKey("MedicationId");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("StockId");
 
@@ -141,6 +89,9 @@ namespace Pharmacy_ASP_API.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid?>("OrderId1")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -156,6 +107,8 @@ namespace Pharmacy_ASP_API.Migrations
 
                     b.HasIndex("OrderId")
                         .IsUnique();
+
+                    b.HasIndex("OrderId1");
 
                     b.ToTable("MedicationRequests");
                 });
@@ -265,54 +218,21 @@ namespace Pharmacy_ASP_API.Migrations
 
                     b.HasKey("StockId");
 
+                    b.HasIndex("MedicationId");
+
                     b.ToTable("Stocks");
-                });
-
-            modelBuilder.Entity("FinanceReport", b =>
-                {
-                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Report", null)
-                        .WithMany()
-                        .HasForeignKey("ReportsReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Finance", null)
-                        .WithMany()
-                        .HasForeignKey("FinancesReportId", "FinancesOrderId", "FinancesPatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MedicationKnowledgeOrder", b =>
-                {
-                    b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", null)
-                        .WithMany()
-                        .HasForeignKey("MedicationKnowledgesMedicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Finance", b =>
-                {
-                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Patient", null)
-                        .WithMany("Finances")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", b =>
                 {
+                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Order", null)
+                        .WithMany("MedicationKnowledges")
+                        .HasForeignKey("OrderId");
+
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.Stock", "Stock")
                         .WithMany("MedicationKnowledges")
                         .HasForeignKey("StockId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Stock");
@@ -323,34 +243,40 @@ namespace Pharmacy_ASP_API.Migrations
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.Order", null)
                         .WithOne("MedicationRequest")
                         .HasForeignKey("Pharmacy_ASP_API.Models.Entities.MedicationRequest", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId1");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Order", b =>
                 {
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", "Medication")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("MedicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.Patient", "Patient")
                         .WithMany("Orders")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.Report", "Report")
                         .WithMany("Orders")
                         .HasForeignKey("ReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.Stock", "Stock")
                         .WithMany("Orders")
                         .HasForeignKey("StockId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Medication");
@@ -362,16 +288,31 @@ namespace Pharmacy_ASP_API.Migrations
                     b.Navigation("Stock");
                 });
 
+            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Stock", b =>
+                {
+                    b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", "Medication")
+                        .WithMany()
+                        .HasForeignKey("MedicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Medication");
+                });
+
+            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Order", b =>
                 {
-                    b.Navigation("MedicationRequest")
-                        .IsRequired();
+                    b.Navigation("MedicationKnowledges");
+
+                    b.Navigation("MedicationRequest");
                 });
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Patient", b =>
                 {
-                    b.Navigation("Finances");
-
                     b.Navigation("Orders");
                 });
 

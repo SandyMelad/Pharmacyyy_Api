@@ -19,6 +19,7 @@ namespace Pharmacy_ASP_API.Repositories
         public async Task<IEnumerable<MedicationRequest>> GetAllAsync()
         {
             return await _context.MedicationRequests
+                .Include(mr => mr.Order)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -26,12 +27,15 @@ namespace Pharmacy_ASP_API.Repositories
         public async Task<MedicationRequest> GetByIdAsync(Guid id)
         {
             return await _context.MedicationRequests
+                .Include(mr => mr.Order)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(mr => mr.RequestId == id);
         }
 
         public async Task AddAsync(MedicationRequest entity)
         {
+
+
             await _context.MedicationRequests.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
@@ -39,12 +43,16 @@ namespace Pharmacy_ASP_API.Repositories
         public async Task UpdateAsync(MedicationRequest entity, Guid id)
         {
             var existing = await _context.MedicationRequests
+                .Include(mr => mr.Order)
                 .FirstOrDefaultAsync(mr => mr.RequestId == id);
 
             if (existing == null)
             {
                 throw new KeyNotFoundException($"MedicationRequest with ID {id} not found.");
             }
+
+            // Verify that the new Order exists if it's being changed
+
 
             // Update scalar properties
             existing.DrOutBed = entity.DrOutBed;
@@ -54,7 +62,6 @@ namespace Pharmacy_ASP_API.Repositories
             existing.Note = entity.Note;
             existing.DoseInstruction = entity.DoseInstruction;
             existing.authoredTime = entity.authoredTime;
-            existing.OrderId = entity.OrderId;
 
             await _context.SaveChangesAsync();
         }
@@ -62,6 +69,7 @@ namespace Pharmacy_ASP_API.Repositories
         public async Task DeleteAsync(Guid id)
         {
             var entity = await _context.MedicationRequests
+                .Include(mr => mr.Order)
                 .FirstOrDefaultAsync(mr => mr.RequestId == id);
 
             if (entity == null)

@@ -39,20 +39,40 @@ namespace Pharmacy_ASP_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Stock>> CreateStock([FromBody] Stock stock)
         {
+            if (stock == null)
+            {
+                return BadRequest(new { Message = "Stock data is required." });
+            }
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(new { Message = "Validation failed.", Errors = errors });
             }
 
             try
             {
-                stock.StockId = Guid.NewGuid(); // Ensure a new ID is generated
+                // Initialize the stock
+                stock.StockId = Guid.NewGuid();
+                stock.MedicationKnowledges = new List<MedicationKnowledge>();
+                stock.Orders = new List<Order>();
+
+                // Validate MedicationId
+
+
                 await _stockRepository.AddAsync(stock);
                 return CreatedAtAction(nameof(GetStock), new { id = stock.StockId }, stock);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "An error occurred while creating the stock.", Error = ex.Message });
+                return StatusCode(500, new { 
+                    Message = "An error occurred while creating the stock.", 
+                    Error = ex.Message,
+                    InnerError = ex.InnerException?.Message 
+                });
             }
         }
 
@@ -60,14 +80,26 @@ namespace Pharmacy_ASP_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStock(Guid id, [FromBody] Stock stock)
         {
+            if (stock == null)
+            {
+                return BadRequest(new { Message = "Stock data is required." });
+            }
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(new { Message = "Validation failed.", Errors = errors });
             }
 
             if (id != stock.StockId)
             {
-                return BadRequest(new { Message = "Stock ID in URL must match Stock ID in body." });
+                return BadRequest(new { 
+                    Message = "Stock ID mismatch.", 
+                    Details = $"The ID in the URL ({id}) does not match the ID in the request body ({stock.StockId}). Please ensure both IDs are the same."
+                });
             }
 
             try
@@ -81,7 +113,11 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "An error occurred while updating the stock.", Error = ex.Message });
+                return StatusCode(500, new { 
+                    Message = "An error occurred while updating the stock.", 
+                    Error = ex.Message,
+                    InnerError = ex.InnerException?.Message 
+                });
             }
         }
 
@@ -100,7 +136,11 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "An error occurred while deleting the stock.", Error = ex.Message });
+                return StatusCode(500, new { 
+                    Message = "An error occurred while deleting the stock.", 
+                    Error = ex.Message,
+                    InnerError = ex.InnerException?.Message 
+                });
             }
         }
     }

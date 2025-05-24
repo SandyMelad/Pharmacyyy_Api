@@ -16,7 +16,6 @@ namespace Pharmacy_ASP_API.Repositories
         public async Task<IEnumerable<Report>> GetAllAsync()
         {
             return await _context.Reports
-                .Include(r => r.Finances)
                 .Include(r => r.Orders)
                 .AsNoTracking()
                 .ToListAsync();
@@ -25,7 +24,6 @@ namespace Pharmacy_ASP_API.Repositories
         public async Task<Report> GetByIdAsync(Guid id)
         {
             return await _context.Reports
-                .Include(r => r.Finances)
                 .Include(r => r.Orders)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.ReportId == id);
@@ -33,6 +31,11 @@ namespace Pharmacy_ASP_API.Repositories
 
         public async Task AddAsync(Report entity)
         {
+            if (entity.Orders == null)
+            {
+                entity.Orders = new List<Order>();
+            }
+
             await _context.Reports.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
@@ -40,6 +43,7 @@ namespace Pharmacy_ASP_API.Repositories
         public async Task UpdateAsync(Report entity, Guid id)
         {
             var existingReport = await _context.Reports
+                .Include(r => r.Orders)
                 .FirstOrDefaultAsync(r => r.ReportId == id);
 
             if (existingReport == null)
@@ -52,12 +56,15 @@ namespace Pharmacy_ASP_API.Repositories
             existingReport.OrderCount = entity.OrderCount;
             existingReport.StockAcidPrice = entity.StockAcidPrice;
 
+            // Don't update the Orders collection here as it should be managed through Order entity
+
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
         {
             var report = await _context.Reports
+                .Include(r => r.Orders)
                 .FirstOrDefaultAsync(r => r.ReportId == id);
 
             if (report == null)

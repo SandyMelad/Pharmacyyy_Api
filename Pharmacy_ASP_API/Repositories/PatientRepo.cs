@@ -17,7 +17,6 @@ namespace Pharmacy_ASP_API.Repositories
         {
             return await _context.Patients
                 .Include(p => p.Orders)
-                .Include(p => p.Finances)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -26,7 +25,6 @@ namespace Pharmacy_ASP_API.Repositories
         {
             return await _context.Patients
                 .Include(p => p.Orders)
-                .Include(p => p.Finances)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.PatientId == id);
         }

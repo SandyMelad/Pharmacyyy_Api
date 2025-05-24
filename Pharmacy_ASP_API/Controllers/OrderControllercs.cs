@@ -27,32 +27,82 @@ namespace Pharmacy_ASP_API.Controllers
         public async Task<ActionResult<Order>> GetById(Guid id)
         {
             var order = await _orderRepo.GetByIdAsync(id);
-           return order == null ? NotFound() : Ok(order);
+            return order == null ? NotFound(new { Message = $"Order with ID {id} not found." }) : Ok(order);
         }
 
         // POST: api/order
         [HttpPost]
-        public async Task<ActionResult<Order>> Create(Order order)
+        public async Task<ActionResult<Order>> Create([FromBody] Order order)
         {
-            await _orderRepo.AddAsync(order);
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (order.PatientId == Guid.Empty)
+            {
+                return BadRequest(new { Message = "Patient ID is required." });
+            }
+
+            try
+            {
+                order.OrderId = Guid.NewGuid();
+                order.OrderTime = DateTime.UtcNow;
+                await _orderRepo.AddAsync(order);
+                return CreatedAtAction(nameof(GetById), new { id = order.OrderId }, order);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while creating the order.", Error = ex.Message });
+            }
         }
 
         // PUT: api/order/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, Order order)
+        public async Task<IActionResult> Update(Guid id, [FromBody] Order order)
         {
-        
-            await _orderRepo.UpdateAsync(order, id);
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != order.OrderId)
+            {
+                return BadRequest(new { Message = "Order ID in URL must match Order ID in body." });
+            }
+
+            try
+            {
+                await _orderRepo.UpdateAsync(order, id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Message = $"Order with ID {id} not found." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while updating the order.", Error = ex.Message });
+            }
         }
 
         // DELETE: api/order/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _orderRepo.DeleteAsync(id);
-            return Ok();
+            try
+            {
+                await _orderRepo.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Message = $"Order with ID {id} not found." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while deleting the order.", Error = ex.Message });
+            }
         }
     }
 }

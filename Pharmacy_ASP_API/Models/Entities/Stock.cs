@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Pharmacy_ASP_API.Models.Entities
 {
@@ -13,17 +11,17 @@ namespace Pharmacy_ASP_API.Models.Entities
         [Key]
         public Guid StockId { get; set; }
 
-        [Key]
-        public Guid MedicationId { get; set; }
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Quantity cannot be negative")]
         public int Quantity { get; set; }
-        public DateTime WarningDate { get; set;}
 
-        
+        [Required]
+        public DateTime WarningDate { get; set; }
 
+        [JsonIgnore]
+        public virtual ICollection<MedicationKnowledge> MedicationKnowledges { get; set; } = new List<MedicationKnowledge>();
 
-      
-        public ICollection<MedicationKnowledge> MedicationKnowledges { get; set; }
-
-        public ICollection<Order> Orders { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

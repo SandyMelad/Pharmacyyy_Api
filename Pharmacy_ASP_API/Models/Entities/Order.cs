@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Pharmacy_ASP_API.Models.Entities
 {
@@ -15,36 +16,32 @@ namespace Pharmacy_ASP_API.Models.Entities
         public DateTime OrderTime { get; set; }
         public int Quantity { get; set; }
 
-
-
-
-
         [ForeignKey("Medication")]
         public Guid MedicationId { get; set; }
-        public MedicationKnowledge Medication { get; set; }
+        [JsonIgnore]
+        public virtual MedicationKnowledge? Medication { get; set; }
 
         [ForeignKey("MedicationRequest")]
-        public Guid MedicationRequestId { get; set; }
-        public MedicationRequest MedicationRequest { get; set; }
+        public Guid? MedicationRequestId { get; set; }
+        [JsonIgnore]
+        public virtual MedicationRequest? MedicationRequest { get; set; }
 
         [ForeignKey("Patient")]
         public Guid PatientId { get; set; }
-        public Patient Patient { get; set; }
+        [JsonIgnore]
+        public virtual Patient? Patient { get; set; }
 
         [ForeignKey("Report")]
         public Guid ReportId { get; set; }
-        public Report Report { get; set; }
-
+        [JsonIgnore]
+        public virtual Report? Report { get; set; }
 
         [ForeignKey("Stock")]
         public Guid StockId { get; set; }
-        public Stock Stock { get; set; }
+        [JsonIgnore]
+        public virtual Stock? Stock { get; set; }
 
-
-        public ICollection<MedicationKnowledge> MedicationKnowledges { get; set; }
-
-
-        
+        [JsonIgnore]
+        public virtual ICollection<MedicationKnowledge>? MedicationKnowledges { get; set; }
     }
-
 }

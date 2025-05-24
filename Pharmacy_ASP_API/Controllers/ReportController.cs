@@ -39,20 +39,36 @@ namespace Pharmacy_ASP_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Report>> CreateReport([FromBody] Report report)
         {
+            if (report == null)
+            {
+                return BadRequest(new { Message = "Report data is required." });
+            }
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(new { Message = "Validation failed.", Errors = errors });
             }
 
             try
             {
-                report.ReportId = Guid.NewGuid(); // Ensure a new ID is generated
+                // Initialize the report
+                report.ReportId = Guid.NewGuid();
+                report.Orders = new List<Order>();
+
                 await _reportRepository.AddAsync(report);
                 return CreatedAtAction(nameof(GetReport), new { id = report.ReportId }, report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "An error occurred while creating the report.", Error = ex.Message });
+                return StatusCode(500, new { 
+                    Message = "An error occurred while creating the report.", 
+                    Error = ex.Message,
+                    InnerError = ex.InnerException?.Message 
+                });
             }
         }
 
@@ -60,14 +76,26 @@ namespace Pharmacy_ASP_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReport(Guid id, [FromBody] Report report)
         {
+            if (report == null)
+            {
+                return BadRequest(new { Message = "Report data is required." });
+            }
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(new { Message = "Validation failed.", Errors = errors });
             }
 
             if (id != report.ReportId)
             {
-                return BadRequest(new { Message = "Report ID in URL must match Report ID in body." });
+                return BadRequest(new { 
+                    Message = "Report ID mismatch.", 
+                    Details = $"The ID in the URL ({id}) does not match the ID in the request body ({report.ReportId}). Please ensure both IDs are the same."
+                });
             }
 
             try
@@ -81,7 +109,11 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "An error occurred while updating the report.", Error = ex.Message });
+                return StatusCode(500, new { 
+                    Message = "An error occurred while updating the report.", 
+                    Error = ex.Message,
+                    InnerError = ex.InnerException?.Message 
+                });
             }
         }
 
@@ -100,7 +132,11 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "An error occurred while deleting the report.", Error = ex.Message });
+                return StatusCode(500, new { 
+                    Message = "An error occurred while deleting the report.", 
+                    Error = ex.Message,
+                    InnerError = ex.InnerException?.Message 
+                });
             }
         }
     }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Pharmacy_ASP_API.Migrations
 {
     /// <inheritdoc />
-    public partial class @in : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,38 +50,15 @@ namespace Pharmacy_ASP_API.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Stocks",
+                name: "MedicationKnowledgeOrders",
                 columns: table => new
                 {
-                    StockId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    MedicationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    WarningDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    MedicationKnowledgesMedicationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    OrdersOrderId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stocks", x => x.StockId);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Finances",
-                columns: table => new
-                {
-                    ReportId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    PatientId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ReportDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Finances", x => new { x.ReportId, x.OrderId, x.PatientId });
-                    table.ForeignKey(
-                        name: "FK_Finances_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "PatientId",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_MedicationKnowledgeOrders", x => new { x.MedicationKnowledgesMedicationId, x.OrdersOrderId });
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -105,39 +82,27 @@ namespace Pharmacy_ASP_API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedicationKnowledges", x => x.MedicationId);
-                    table.ForeignKey(
-                        name: "FK_MedicationKnowledges_Stocks_StockId",
-                        column: x => x.StockId,
-                        principalTable: "Stocks",
-                        principalColumn: "StockId",
-                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "FinanceReport",
+                name: "Stocks",
                 columns: table => new
                 {
-                    ReportsReportId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    FinancesReportId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    FinancesOrderId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    FinancesPatientId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    StockId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    MedicationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    WarningDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FinanceReport", x => new { x.ReportsReportId, x.FinancesReportId, x.FinancesOrderId, x.FinancesPatientId });
+                    table.PrimaryKey("PK_Stocks", x => x.StockId);
                     table.ForeignKey(
-                        name: "FK_FinanceReport_Finances_FinancesReportId_FinancesOrderId_Fina~",
-                        columns: x => new { x.FinancesReportId, x.FinancesOrderId, x.FinancesPatientId },
-                        principalTable: "Finances",
-                        principalColumns: new[] { "ReportId", "OrderId", "PatientId" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_FinanceReport_Reports_ReportsReportId",
-                        column: x => x.ReportsReportId,
-                        principalTable: "Reports",
-                        principalColumn: "ReportId",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Stocks_MedicationKnowledges_MedicationId",
+                        column: x => x.MedicationId,
+                        principalTable: "MedicationKnowledges",
+                        principalColumn: "MedicationId",
+                        onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -162,50 +127,25 @@ namespace Pharmacy_ASP_API.Migrations
                         column: x => x.MedicationId,
                         principalTable: "MedicationKnowledges",
                         principalColumn: "MedicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Orders_Patients_PatientId",
                         column: x => x.PatientId,
                         principalTable: "Patients",
                         principalColumn: "PatientId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Orders_Reports_ReportId",
                         column: x => x.ReportId,
                         principalTable: "Reports",
                         principalColumn: "ReportId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Orders_Stocks_StockId",
                         column: x => x.StockId,
                         principalTable: "Stocks",
                         principalColumn: "StockId",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "MedicationKnowledgeOrders",
-                columns: table => new
-                {
-                    MedicationKnowledgesMedicationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    OrdersOrderId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MedicationKnowledgeOrders", x => new { x.MedicationKnowledgesMedicationId, x.OrdersOrderId });
-                    table.ForeignKey(
-                        name: "FK_MedicationKnowledgeOrders_MedicationKnowledges_MedicationKno~",
-                        column: x => x.MedicationKnowledgesMedicationId,
-                        principalTable: "MedicationKnowledges",
-                        principalColumn: "MedicationId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MedicationKnowledgeOrders_Orders_OrdersOrderId",
-                        column: x => x.OrdersOrderId,
-                        principalTable: "Orders",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -237,19 +177,9 @@ namespace Pharmacy_ASP_API.Migrations
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FinanceReport_FinancesReportId_FinancesOrderId_FinancesPatie~",
-                table: "FinanceReport",
-                columns: new[] { "FinancesReportId", "FinancesOrderId", "FinancesPatientId" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Finances_PatientId",
-                table: "Finances",
-                column: "PatientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicationKnowledgeOrders_OrdersOrderId",
@@ -286,13 +216,44 @@ namespace Pharmacy_ASP_API.Migrations
                 name: "IX_Orders_StockId",
                 table: "Orders",
                 column: "StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stocks_MedicationId",
+                table: "Stocks",
+                column: "MedicationId",
+                unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_MedicationKnowledgeOrders_MedicationKnowledges_MedicationKno~",
+                table: "MedicationKnowledgeOrders",
+                column: "MedicationKnowledgesMedicationId",
+                principalTable: "MedicationKnowledges",
+                principalColumn: "MedicationId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_MedicationKnowledgeOrders_Orders_OrdersOrderId",
+                table: "MedicationKnowledgeOrders",
+                column: "OrdersOrderId",
+                principalTable: "Orders",
+                principalColumn: "OrderId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_MedicationKnowledges_Stocks_StockId",
+                table: "MedicationKnowledges",
+                column: "StockId",
+                principalTable: "Stocks",
+                principalColumn: "StockId",
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "FinanceReport");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Stocks_MedicationKnowledges_MedicationId",
+                table: "Stocks");
 
             migrationBuilder.DropTable(
                 name: "MedicationKnowledgeOrders");
@@ -301,19 +262,16 @@ namespace Pharmacy_ASP_API.Migrations
                 name: "MedicationRequests");
 
             migrationBuilder.DropTable(
-                name: "Finances");
-
-            migrationBuilder.DropTable(
                 name: "Orders");
-
-            migrationBuilder.DropTable(
-                name: "MedicationKnowledges");
 
             migrationBuilder.DropTable(
                 name: "Patients");
 
             migrationBuilder.DropTable(
                 name: "Reports");
+
+            migrationBuilder.DropTable(
+                name: "MedicationKnowledges");
 
             migrationBuilder.DropTable(
                 name: "Stocks");

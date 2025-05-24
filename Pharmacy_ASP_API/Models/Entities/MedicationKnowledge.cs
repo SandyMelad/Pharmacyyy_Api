@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Pharmacy_ASP_API.Models.Entities
 {
@@ -12,25 +10,34 @@ namespace Pharmacy_ASP_API.Models.Entities
     {
         [Key]
         public Guid MedicationId { get; set; }
-        public string MedicationName { get; set; }
-        public string ClinicalUse { get; set; }
+
+        [Required]
+        public required string MedicationName { get; set; }
+
+        [Required]
+        public required string ClinicalUse { get; set; }
+
+        [Required]
+        [Range(0, double.MaxValue, ErrorMessage = "Cost cannot be negative")]
         public decimal Cost { get; set; }
-        public string ProductType { get; set; }
-        public string Status { get; set; }
+
+        [Required]
+        public required string ProductType { get; set; }
+
+        [Required]
+        public required string Status { get; set; }
+
+        [Required]
         public DateTime Expirydate { get; set; }
 
-
-
-
+        [Required]
         [ForeignKey("Stock")]
         public Guid StockId { get; set; }
-        public Stock Stock { get; set; }
 
+        [JsonIgnore]
+        public virtual Stock? Stock { get; set; }
 
-
-        public ICollection<Order> Orders { get; set; }
-       
-
-        
+        [JsonIgnore]
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }
