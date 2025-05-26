@@ -21,7 +21,7 @@ namespace Pharmacy_ASP_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Patient> GetByIdAsync(Guid id)
+        public async Task<Patient> GetByIdAsync(string id)
         {
             return await _context.Patients
                 .Include(p => p.Orders)
@@ -35,7 +35,7 @@ namespace Pharmacy_ASP_API.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Patient entity, Guid id)
+        public async Task UpdateAsync(Patient entity, string id)
         {
             var existingPatient = await _context.Patients
                 .FirstOrDefaultAsync(p => p.PatientId == id);
@@ -55,7 +55,7 @@ namespace Pharmacy_ASP_API.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(string id)
         {
             var patient = await _context.Patients
                 .FirstOrDefaultAsync(p => p.PatientId == id);

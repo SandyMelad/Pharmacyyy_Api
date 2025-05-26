@@ -25,7 +25,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // GET: api/Stock/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Stock>> GetStock(Guid id)
+        public async Task<ActionResult<Stock>> GetStock(string id)
         {
             var stock = await _stockRepository.GetByIdAsync(id);
             if (stock == null)
@@ -56,12 +56,9 @@ namespace Pharmacy_ASP_API.Controllers
             try
             {
                 // Initialize the stock
-                stock.StockId = Guid.NewGuid();
+                stock.StockId = DateTime.UtcNow.Ticks.ToString();
                 stock.MedicationKnowledges = new List<MedicationKnowledge>();
                 stock.Orders = new List<Order>();
-
-                // Validate MedicationId
-
 
                 await _stockRepository.AddAsync(stock);
                 return CreatedAtAction(nameof(GetStock), new { id = stock.StockId }, stock);
@@ -78,7 +75,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // PUT: api/Stock/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStock(Guid id, [FromBody] Stock stock)
+        public async Task<IActionResult> UpdateStock(string id, [FromBody] Stock stock)
         {
             if (stock == null)
             {
@@ -113,17 +110,13 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    Message = "An error occurred while updating the stock.", 
-                    Error = ex.Message,
-                    InnerError = ex.InnerException?.Message 
-                });
+                return StatusCode(500, new { Message = "An error occurred while updating the stock.", Error = ex.Message });
             }
         }
 
         // DELETE: api/Stock/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStock(Guid id)
+        public async Task<IActionResult> DeleteStock(string id)
         {
             try
             {
@@ -136,11 +129,7 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    Message = "An error occurred while deleting the stock.", 
-                    Error = ex.Message,
-                    InnerError = ex.InnerException?.Message 
-                });
+                return StatusCode(500, new { Message = "An error occurred while deleting the stock.", Error = ex.Message });
             }
         }
     }

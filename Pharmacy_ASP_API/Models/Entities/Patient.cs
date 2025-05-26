@@ -17,7 +17,7 @@ namespace Pharmacy_ASP_API.Models.Entities
     public class Patient
     {
         [Key]
-        public Guid PatientId { get; set; }
+        public string PatientId { get; set; }
         public required string PatientName { get; set; }
         public required string PhoneNo { get; set; }
         public string? Address { get; set; }

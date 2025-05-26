@@ -25,7 +25,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // GET: api/Report/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Report>> GetReport(Guid id)
+        public async Task<ActionResult<Report>> GetReport(string id)
         {
             var report = await _reportRepository.GetByIdAsync(id);
             if (report == null)
@@ -56,7 +56,7 @@ namespace Pharmacy_ASP_API.Controllers
             try
             {
                 // Initialize the report
-                report.ReportId = Guid.NewGuid();
+                report.ReportId = DateTime.UtcNow.Ticks.ToString();
                 report.Orders = new List<Order>();
 
                 await _reportRepository.AddAsync(report);
@@ -74,7 +74,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // PUT: api/Report/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateReport(Guid id, [FromBody] Report report)
+        public async Task<IActionResult> UpdateReport(string id, [FromBody] Report report)
         {
             if (report == null)
             {
@@ -109,17 +109,13 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    Message = "An error occurred while updating the report.", 
-                    Error = ex.Message,
-                    InnerError = ex.InnerException?.Message 
-                });
+                return StatusCode(500, new { Message = "An error occurred while updating the report.", Error = ex.Message });
             }
         }
 
         // DELETE: api/Report/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReport(Guid id)
+        public async Task<IActionResult> DeleteReport(string id)
         {
             try
             {
@@ -132,11 +128,7 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    Message = "An error occurred while deleting the report.", 
-                    Error = ex.Message,
-                    InnerError = ex.InnerException?.Message 
-                });
+                return StatusCode(500, new { Message = "An error occurred while deleting the report.", Error = ex.Message });
             }
         }
     }

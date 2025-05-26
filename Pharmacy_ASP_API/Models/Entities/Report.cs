@@ -8,7 +8,7 @@ namespace Pharmacy_ASP_API.Models.Entities
     public class Report
     {
         [Key]
-        public Guid ReportId { get; set; }
+        public string ReportId { get; set; }
 
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Total sales cannot be negative")]

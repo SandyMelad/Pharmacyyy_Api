@@ -29,7 +29,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // GET: api/medicationrequest/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<MedicationRequest>> GetById(Guid id)
+        public async Task<ActionResult<MedicationRequest>> GetById(string id)
         {
             var request = await _medRequestRepo.GetByIdAsync(id);
             if (request == null)
@@ -89,7 +89,7 @@ namespace Pharmacy_ASP_API.Controllers
 
 
                 // Set default values
-                medRequest.RequestId = Guid.NewGuid();
+                medRequest.RequestId = DateTime.UtcNow.Ticks.ToString();
                 medRequest.StatusTime = DateTime.UtcNow;
 
                 await _medRequestRepo.AddAsync(medRequest);
@@ -107,7 +107,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // PUT: api/medicationrequest/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] MedicationRequest medRequest)
+        public async Task<IActionResult> Update(string id, [FromBody] MedicationRequest medRequest)
         {
             if (medRequest == null)
             {
@@ -152,7 +152,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // DELETE: api/medicationrequest/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {

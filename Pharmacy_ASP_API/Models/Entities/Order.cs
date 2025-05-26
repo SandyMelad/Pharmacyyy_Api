@@ -12,32 +12,32 @@ namespace Pharmacy_ASP_API.Models.Entities
     public class Order
     {
         [Key]
-        public Guid OrderId { get; set; }
+        public string OrderId { get; set; }
         public DateTime OrderTime { get; set; }
         public int Quantity { get; set; }
 
         [ForeignKey("Medication")]
-        public Guid MedicationId { get; set; }
+        public string MedicationId { get; set; }
         [JsonIgnore]
         public virtual MedicationKnowledge? Medication { get; set; }
 
         [ForeignKey("MedicationRequest")]
-        public Guid? MedicationRequestId { get; set; }
+        public string? MedicationRequestId { get; set; }
         [JsonIgnore]
         public virtual MedicationRequest? MedicationRequest { get; set; }
 
         [ForeignKey("Patient")]
-        public Guid PatientId { get; set; }
+        public string PatientId { get; set; }
         [JsonIgnore]
         public virtual Patient? Patient { get; set; }
 
         [ForeignKey("Report")]
-        public Guid ReportId { get; set; }
+        public string ReportId { get; set; }
         [JsonIgnore]
         public virtual Report? Report { get; set; }
 
         [ForeignKey("Stock")]
-        public Guid StockId { get; set; }
+        public string StockId { get; set; }
         [JsonIgnore]
         public virtual Stock? Stock { get; set; }
 

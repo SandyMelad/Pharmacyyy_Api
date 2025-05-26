@@ -21,7 +21,7 @@ namespace Pharmacy_ASP_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Report> GetByIdAsync(Guid id)
+        public async Task<Report> GetByIdAsync(string id)
         {
             return await _context.Reports
                 .Include(r => r.Orders)
@@ -40,7 +40,7 @@ namespace Pharmacy_ASP_API.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Report entity, Guid id)
+        public async Task UpdateAsync(Report entity, string id)
         {
             var existingReport = await _context.Reports
                 .Include(r => r.Orders)
@@ -61,7 +61,7 @@ namespace Pharmacy_ASP_API.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(string id)
         {
             var report = await _context.Reports
                 .Include(r => r.Orders)
