@@ -12,6 +12,9 @@ namespace Pharmacy_ASP_API.Models.Entities
         public string MedicationId { get; set; }
 
         [Required]
+        public int quantity { get; set; }
+
+        [Required]
         public required string MedicationName { get; set; }
 
         [Required]

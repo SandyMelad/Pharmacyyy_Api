@@ -61,7 +61,8 @@ namespace Pharmacy_ASP_API.Controllers
             {
                 var medication = new MedicationKnowledge
                 {
-                    MedicationId = DateTime.UtcNow.Ticks.ToString(),
+                    MedicationId = dto.MedicationId,
+                    quantity = dto.quantity,
                     MedicationName = dto.MedicationName,
                     ClinicalUse = dto.ClinicalUse,
                     Cost = dto.Cost,
@@ -69,6 +70,7 @@ namespace Pharmacy_ASP_API.Controllers
                     Status = dto.Status,
                     Expirydate = dto.Expirydate,
                     StockId = dto.StockId
+                    
                 };
 
                 await _medKnowledgeRepo.AddAsync(medication);
@@ -143,6 +145,13 @@ namespace Pharmacy_ASP_API.Controllers
 
     public class MedicationKnowledgeCreateDto
     {
+
+        [Required]
+        public required string MedicationId { get; set; }
+
+        [Required]
+        public required int quantity { get; set; }
+
         [Required]
         public required string MedicationName { get; set; }
 
@@ -168,6 +177,13 @@ namespace Pharmacy_ASP_API.Controllers
 
     public class MedicationKnowledgeUpdateDto
     {
+
+        [Required]
+        public required string MedicationId { get; set; }
+
+        [Required]
+        public required int quantity { get; set; }
+
         [Required]
         public required string MedicationName { get; set; }
 

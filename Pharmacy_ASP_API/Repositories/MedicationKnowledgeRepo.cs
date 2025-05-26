@@ -83,7 +83,7 @@ namespace Pharmacy_ASP_API.Repositories
             existing.Status = entity.Status;
             existing.Expirydate = entity.Expirydate;
             existing.StockId = entity.StockId;
-
+            existing.quantity = entity.quantity;
             await _context.SaveChangesAsync();
         }
 
