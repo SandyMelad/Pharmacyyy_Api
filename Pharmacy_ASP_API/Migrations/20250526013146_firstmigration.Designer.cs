@@ -11,8 +11,8 @@ using Pharmacy_ASP_API.Models;
 namespace Pharmacy_ASP_API.Migrations
 {
     [DbContext(typeof(PharmacyDbContext))]
-    [Migration("20250524013830_fourth")]
-    partial class fourth
+    [Migration("20250526013146_firstmigration")]
+    partial class firstmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,9 +24,8 @@ namespace Pharmacy_ASP_API.Migrations
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", b =>
                 {
-                    b.Property<Guid>("MedicationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                    b.Property<string>("MedicationId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ClinicalUse")
                         .IsRequired()
@@ -42,8 +41,8 @@ namespace Pharmacy_ASP_API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid?>("OrderId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("OrderId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProductType")
                         .IsRequired()
@@ -53,8 +52,9 @@ namespace Pharmacy_ASP_API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("StockId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("StockId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("MedicationId");
 
@@ -67,9 +67,8 @@ namespace Pharmacy_ASP_API.Migrations
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationRequest", b =>
                 {
-                    b.Property<Guid>("RequestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                    b.Property<string>("RequestId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("DoseInstruction")
                         .IsRequired()
@@ -86,12 +85,6 @@ namespace Pharmacy_ASP_API.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid?>("OrderId1")
-                        .HasColumnType("char(36)");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -105,44 +98,45 @@ namespace Pharmacy_ASP_API.Migrations
 
                     b.HasKey("RequestId");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
-
-                    b.HasIndex("OrderId1");
-
                     b.ToTable("MedicationRequests");
                 });
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Order", b =>
                 {
-                    b.Property<Guid>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                    b.Property<string>("OrderId")
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("MedicationId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("MedicationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("MedicationRequestId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("MedicationRequestId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("OrderTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("PatientId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("PatientId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ReportId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("ReportId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<Guid>("StockId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("StockId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("OrderId");
 
                     b.HasIndex("MedicationId");
+
+                    b.HasIndex("MedicationRequestId")
+                        .IsUnique();
 
                     b.HasIndex("PatientId");
 
@@ -155,9 +149,8 @@ namespace Pharmacy_ASP_API.Migrations
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Patient", b =>
                 {
-                    b.Property<Guid>("PatientId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                    b.Property<string>("PatientId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Address")
                         .HasColumnType("longtext");
@@ -183,9 +176,8 @@ namespace Pharmacy_ASP_API.Migrations
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Report", b =>
                 {
-                    b.Property<Guid>("ReportId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                    b.Property<string>("ReportId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("OrderCount")
                         .HasColumnType("int");
@@ -203,12 +195,8 @@ namespace Pharmacy_ASP_API.Migrations
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Stock", b =>
                 {
-                    b.Property<Guid>("StockId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("MedicationId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("StockId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -217,8 +205,6 @@ namespace Pharmacy_ASP_API.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("StockId");
-
-                    b.HasIndex("MedicationId");
 
                     b.ToTable("Stocks");
                 });
@@ -238,21 +224,6 @@ namespace Pharmacy_ASP_API.Migrations
                     b.Navigation("Stock");
                 });
 
-            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationRequest", b =>
-                {
-                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Order", null)
-                        .WithOne("MedicationRequest")
-                        .HasForeignKey("Pharmacy_ASP_API.Models.Entities.MedicationRequest", "OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Pharmacy_ASP_API.Models.Entities.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId1");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Order", b =>
                 {
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", "Medication")
@@ -260,6 +231,11 @@ namespace Pharmacy_ASP_API.Migrations
                         .HasForeignKey("MedicationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationRequest", "MedicationRequest")
+                        .WithOne("Order")
+                        .HasForeignKey("Pharmacy_ASP_API.Models.Entities.Order", "MedicationRequestId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.Patient", "Patient")
                         .WithMany("Orders")
@@ -281,6 +257,8 @@ namespace Pharmacy_ASP_API.Migrations
 
                     b.Navigation("Medication");
 
+                    b.Navigation("MedicationRequest");
+
                     b.Navigation("Patient");
 
                     b.Navigation("Report");
@@ -288,27 +266,19 @@ namespace Pharmacy_ASP_API.Migrations
                     b.Navigation("Stock");
                 });
 
-            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Stock", b =>
-                {
-                    b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", "Medication")
-                        .WithMany()
-                        .HasForeignKey("MedicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Medication");
-                });
-
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", b =>
                 {
                     b.Navigation("Orders");
                 });
 
+            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationRequest", b =>
+                {
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Order", b =>
                 {
                     b.Navigation("MedicationKnowledges");
-
-                    b.Navigation("MedicationRequest");
                 });
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Patient", b =>

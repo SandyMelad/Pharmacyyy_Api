@@ -9,7 +9,7 @@ namespace Pharmacy_ASP_API.Models.Entities
     public class MedicationRequest
     {
         [Key]
-        public Guid RequestId { get; set; }
+        public string RequestId { get; set; }
 
         [Required]
         public required string DrOutBed { get; set; }

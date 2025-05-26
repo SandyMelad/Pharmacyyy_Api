@@ -24,7 +24,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // GET: api/order/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetById(Guid id)
+        public async Task<ActionResult<Order>> GetById(string id)
         {
             var order = await _orderRepo.GetByIdAsync(id);
             return order == null ? NotFound(new { Message = $"Order with ID {id} not found." }) : Ok(order);
@@ -39,14 +39,14 @@ namespace Pharmacy_ASP_API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (order.PatientId == Guid.Empty)
+            if (string.IsNullOrEmpty(order.PatientId))
             {
                 return BadRequest(new { Message = "Patient ID is required." });
             }
 
             try
             {
-                order.OrderId = Guid.NewGuid();
+                order.OrderId = DateTime.UtcNow.Ticks.ToString();
                 order.OrderTime = DateTime.UtcNow;
                 await _orderRepo.AddAsync(order);
                 return CreatedAtAction(nameof(GetById), new { id = order.OrderId }, order);
@@ -59,7 +59,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // PUT: api/order/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] Order order)
+        public async Task<IActionResult> Update(string id, [FromBody] Order order)
         {
             if (!ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // DELETE: api/order/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {

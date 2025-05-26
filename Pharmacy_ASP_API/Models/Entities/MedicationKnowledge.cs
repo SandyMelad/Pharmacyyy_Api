@@ -9,7 +9,7 @@ namespace Pharmacy_ASP_API.Models.Entities
     public class MedicationKnowledge
     {
         [Key]
-        public Guid MedicationId { get; set; }
+        public string MedicationId { get; set; }
 
         [Required]
         public required string MedicationName { get; set; }
@@ -32,7 +32,7 @@ namespace Pharmacy_ASP_API.Models.Entities
 
         [Required]
         [ForeignKey("Stock")]
-        public Guid StockId { get; set; }
+        public string StockId { get; set; }
 
         [JsonIgnore]
         public virtual Stock? Stock { get; set; }

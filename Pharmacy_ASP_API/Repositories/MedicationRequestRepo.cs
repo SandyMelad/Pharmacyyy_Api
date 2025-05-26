@@ -24,7 +24,7 @@ namespace Pharmacy_ASP_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<MedicationRequest> GetByIdAsync(Guid id)
+        public async Task<MedicationRequest> GetByIdAsync(string id)
         {
             return await _context.MedicationRequests
                 .Include(mr => mr.Order)
@@ -34,13 +34,11 @@ namespace Pharmacy_ASP_API.Repositories
 
         public async Task AddAsync(MedicationRequest entity)
         {
-
-
             await _context.MedicationRequests.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(MedicationRequest entity, Guid id)
+        public async Task UpdateAsync(MedicationRequest entity, string id)
         {
             var existing = await _context.MedicationRequests
                 .Include(mr => mr.Order)
@@ -50,9 +48,6 @@ namespace Pharmacy_ASP_API.Repositories
             {
                 throw new KeyNotFoundException($"MedicationRequest with ID {id} not found.");
             }
-
-            // Verify that the new Order exists if it's being changed
-
 
             // Update scalar properties
             existing.DrOutBed = entity.DrOutBed;
@@ -66,7 +61,7 @@ namespace Pharmacy_ASP_API.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(string id)
         {
             var entity = await _context.MedicationRequests
                 .Include(mr => mr.Order)

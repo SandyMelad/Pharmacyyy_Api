@@ -29,7 +29,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // GET: api/medicationknowledge/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<MedicationKnowledge>> GetById(Guid id)
+        public async Task<ActionResult<MedicationKnowledge>> GetById(string id)
         {
             var medication = await _medKnowledgeRepo.GetByIdAsync(id);
             if (medication == null)
@@ -59,64 +59,32 @@ namespace Pharmacy_ASP_API.Controllers
 
             try
             {
-                // Validate required fields
-                if (string.IsNullOrWhiteSpace(dto.MedicationName))
+                var medication = new MedicationKnowledge
                 {
-                    return BadRequest(new { Message = "MedicationName is required." });
-                }
-
-                if (string.IsNullOrWhiteSpace(dto.ClinicalUse))
-                {
-                    return BadRequest(new { Message = "ClinicalUse is required." });
-                }
-
-                if (string.IsNullOrWhiteSpace(dto.ProductType))
-                {
-                    return BadRequest(new { Message = "ProductType is required." });
-                }
-
-                if (string.IsNullOrWhiteSpace(dto.Status))
-                {
-                    return BadRequest(new { Message = "Status is required." });
-                }
-
-                // Validate StockId
-                if (dto.StockId == Guid.Empty)
-                {
-                    return BadRequest(new { Message = "Valid StockId is required." });
-                }
-
-                var medKnowledge = new MedicationKnowledge
-                {
-                    MedicationId = Guid.NewGuid(),
+                    MedicationId = DateTime.UtcNow.Ticks.ToString(),
                     MedicationName = dto.MedicationName,
                     ClinicalUse = dto.ClinicalUse,
                     Cost = dto.Cost,
                     ProductType = dto.ProductType,
                     Status = dto.Status,
                     Expirydate = dto.Expirydate,
-                    StockId = dto.StockId,
-                    Orders = new List<Order>()
+                    StockId = dto.StockId
                 };
 
-                await _medKnowledgeRepo.AddAsync(medKnowledge);
-                return CreatedAtAction(nameof(GetById), new { id = medKnowledge.MedicationId }, medKnowledge);
+                await _medKnowledgeRepo.AddAsync(medication);
+                return CreatedAtAction(nameof(GetById), new { id = medication.MedicationId }, medication);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    Message = "An error occurred while creating the medication knowledge.", 
-                    Error = ex.Message,
-                    InnerError = ex.InnerException?.Message 
-                });
+                return StatusCode(500, new { Message = "An error occurred while creating the medication knowledge.", Error = ex.Message });
             }
         }
 
         // PUT: api/medicationknowledge/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] MedicationKnowledgeUpdateDto dto)
+        public async Task<IActionResult> Update(string id, [FromBody] MedicationKnowledge medication)
         {
-            if (dto == null)
+            if (medication == null)
             {
                 return BadRequest(new { Message = "MedicationKnowledge data is required." });
             }
@@ -130,21 +98,17 @@ namespace Pharmacy_ASP_API.Controllers
                 return BadRequest(new { Message = "Validation failed.", Errors = errors });
             }
 
+            if (id != medication.MedicationId)
+            {
+                return BadRequest(new { 
+                    Message = "MedicationKnowledge ID mismatch.", 
+                    Details = $"The ID in the URL ({id}) does not match the ID in the request body ({medication.MedicationId}). Please ensure both IDs are the same."
+                });
+            }
+
             try
             {
-                var medKnowledge = new MedicationKnowledge
-                {
-                    MedicationId = id,
-                    MedicationName = dto.MedicationName,
-                    ClinicalUse = dto.ClinicalUse,
-                    Cost = dto.Cost,
-                    ProductType = dto.ProductType,
-                    Status = dto.Status,
-                    Expirydate = dto.Expirydate,
-                    StockId = dto.StockId
-                };
-
-                await _medKnowledgeRepo.UpdateAsync(medKnowledge, id);
+                await _medKnowledgeRepo.UpdateAsync(medication, id);
                 return NoContent();
             }
             catch (KeyNotFoundException)
@@ -153,17 +117,13 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    Message = "An error occurred while updating the medication knowledge.", 
-                    Error = ex.Message,
-                    InnerError = ex.InnerException?.Message 
-                });
+                return StatusCode(500, new { Message = "An error occurred while updating the medication knowledge.", Error = ex.Message });
             }
         }
 
         // DELETE: api/medicationknowledge/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {
@@ -176,11 +136,7 @@ namespace Pharmacy_ASP_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    Message = "An error occurred while deleting the medication knowledge.", 
-                    Error = ex.Message,
-                    InnerError = ex.InnerException?.Message 
-                });
+                return StatusCode(500, new { Message = "An error occurred while deleting the medication knowledge.", Error = ex.Message });
             }
         }
     }
@@ -207,7 +163,7 @@ namespace Pharmacy_ASP_API.Controllers
         public DateTime Expirydate { get; set; }
 
         [Required]
-        public Guid StockId { get; set; }
+        public string StockId { get; set; }
     }
 
     public class MedicationKnowledgeUpdateDto
@@ -232,6 +188,6 @@ namespace Pharmacy_ASP_API.Controllers
         public DateTime Expirydate { get; set; }
 
         [Required]
-        public Guid StockId { get; set; }
+        public string StockId { get; set; }
     }
 }

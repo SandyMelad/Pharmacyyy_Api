@@ -9,7 +9,7 @@ namespace Pharmacy_ASP_API.Models.Entities
     public class Stock
     {
         [Key]
-        public Guid StockId { get; set; }
+        public string StockId { get; set; }
 
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Quantity cannot be negative")]

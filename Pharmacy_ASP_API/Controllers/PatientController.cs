@@ -26,7 +26,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // GET: api/Patient/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Patient>> GetPatient(Guid id)
+        public async Task<ActionResult<Patient>> GetPatient(string id)
         {
             var patient = await _patientRepository.GetByIdAsync(id);
             if (patient == null)
@@ -68,7 +68,7 @@ namespace Pharmacy_ASP_API.Controllers
                 }
 
                 // Set default values
-                patient.PatientId = Guid.NewGuid();
+                patient.PatientId = DateTime.UtcNow.Ticks.ToString();
                 patient.Orders = new List<Order>();
 
                 await _patientRepository.AddAsync(patient);
@@ -82,7 +82,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // PUT: api/Patient/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePatient(Guid id, [FromBody] Patient patient)
+        public async Task<IActionResult> UpdatePatient(string id, [FromBody] Patient patient)
         {
             if (patient == null)
             {
@@ -123,7 +123,7 @@ namespace Pharmacy_ASP_API.Controllers
 
         // DELETE: api/Patient/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePatient(Guid id)
+        public async Task<IActionResult> DeletePatient(string id)
         {
             try
             {
