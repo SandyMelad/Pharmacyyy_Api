@@ -11,8 +11,8 @@ using Pharmacy_ASP_API.Models;
 namespace Pharmacy_ASP_API.Migrations
 {
     [DbContext(typeof(PharmacyDbContext))]
-    [Migration("20250526013146_firstmigration")]
-    partial class firstmigration
+    [Migration("20250526120408_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,6 +82,10 @@ namespace Pharmacy_ASP_API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("MedicationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Note")
                         .HasColumnType("longtext");
 
@@ -97,6 +101,8 @@ namespace Pharmacy_ASP_API.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("RequestId");
+
+                    b.HasIndex("MedicationId");
 
                     b.ToTable("MedicationRequests");
                 });
@@ -222,6 +228,17 @@ namespace Pharmacy_ASP_API.Migrations
                         .IsRequired();
 
                     b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationRequest", b =>
+                {
+                    b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", "MedicationKnowledge")
+                        .WithMany()
+                        .HasForeignKey("MedicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicationKnowledge");
                 });
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Order", b =>

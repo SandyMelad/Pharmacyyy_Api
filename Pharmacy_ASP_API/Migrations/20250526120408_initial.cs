@@ -6,38 +6,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Pharmacy_ASP_API.Migrations
 {
     /// <inheritdoc />
-    public partial class firstmigration : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "MedicationRequests",
-                columns: table => new
-                {
-                    RequestId = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    DrOutBed = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    DrInBed = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Status = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    StatusTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Note = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    DoseInstruction = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    authoredTime = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MedicationRequests", x => x.RequestId);
-                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -126,6 +100,40 @@ namespace Pharmacy_ASP_API.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "MedicationRequests",
+                columns: table => new
+                {
+                    RequestId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DrOutBed = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DrInBed = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Status = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    StatusTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Note = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DoseInstruction = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    authoredTime = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MedicationId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicationRequests", x => x.RequestId);
+                    table.ForeignKey(
+                        name: "FK_MedicationRequests_MedicationKnowledges_MedicationId",
+                        column: x => x.MedicationId,
+                        principalTable: "MedicationKnowledges",
+                        principalColumn: "MedicationId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -191,6 +199,11 @@ namespace Pharmacy_ASP_API.Migrations
                 column: "StockId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MedicationRequests_MedicationId",
+                table: "MedicationRequests",
+                column: "MedicationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_MedicationId",
                 table: "Orders",
                 column: "MedicationId");
@@ -235,9 +248,6 @@ namespace Pharmacy_ASP_API.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "MedicationKnowledges");
-
-            migrationBuilder.DropTable(
                 name: "MedicationRequests");
 
             migrationBuilder.DropTable(
@@ -245,6 +255,9 @@ namespace Pharmacy_ASP_API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reports");
+
+            migrationBuilder.DropTable(
+                name: "MedicationKnowledges");
 
             migrationBuilder.DropTable(
                 name: "Stocks");

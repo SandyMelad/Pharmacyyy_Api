@@ -79,6 +79,10 @@ namespace Pharmacy_ASP_API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("MedicationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Note")
                         .HasColumnType("longtext");
 
@@ -94,6 +98,8 @@ namespace Pharmacy_ASP_API.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("RequestId");
+
+                    b.HasIndex("MedicationId");
 
                     b.ToTable("MedicationRequests");
                 });
@@ -219,6 +225,17 @@ namespace Pharmacy_ASP_API.Migrations
                         .IsRequired();
 
                     b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.MedicationRequest", b =>
+                {
+                    b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", "MedicationKnowledge")
+                        .WithMany()
+                        .HasForeignKey("MedicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicationKnowledge");
                 });
 
             modelBuilder.Entity("Pharmacy_ASP_API.Models.Entities.Order", b =>

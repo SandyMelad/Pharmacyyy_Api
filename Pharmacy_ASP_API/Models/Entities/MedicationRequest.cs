@@ -31,8 +31,15 @@ namespace Pharmacy_ASP_API.Models.Entities
         [Required]
         public string authoredTime { get; set; }
 
+        [Required]
+        [ForeignKey("MedicationKnowledge")]
+        public string MedicationId { get; set; }
+
         [JsonIgnore]
         public virtual Order? Order { get; set; }
+
+        public virtual MedicationKnowledge MedicationKnowledge { get; set; }
+
     }
 }
 
