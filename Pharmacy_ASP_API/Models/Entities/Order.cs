@@ -13,11 +13,11 @@ namespace Pharmacy_ASP_API.Models.Entities
     {
         [Key]
         public string OrderId { get; set; }
-        public DateTime OrderTime { get; set; }
-        public int Quantity { get; set; }
+        public DateTime? OrderTime { get; set; }
+        public int? Quantity { get; set; }
 
         [ForeignKey("Medication")]
-        public string MedicationId { get; set; }
+        public string? MedicationId { get; set; }
         [JsonIgnore]
         public virtual MedicationKnowledge? Medication { get; set; }
 
@@ -27,17 +27,17 @@ namespace Pharmacy_ASP_API.Models.Entities
         public virtual MedicationRequest? MedicationRequest { get; set; }
 
         [ForeignKey("Patient")]
-        public string PatientId { get; set; }
+        public string? PatientId { get; set; }
         [JsonIgnore]
         public virtual Patient? Patient { get; set; }
 
         [ForeignKey("Report")]
-        public string ReportId { get; set; }
+        public string? ReportId { get; set; }
         [JsonIgnore]
         public virtual Report? Report { get; set; }
 
         [ForeignKey("Stock")]
-        public string StockId { get; set; }
+        public string? StockId { get; set; }
         [JsonIgnore]
         public virtual Stock? Stock { get; set; }
 

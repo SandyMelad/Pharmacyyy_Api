@@ -11,34 +11,30 @@ namespace Pharmacy_ASP_API.Models.Entities
         [Key]
         public string RequestId { get; set; }
 
-        [Required]
-        public required string DrOutBed { get; set; }
+        public string? DrOutBed { get; set; }
 
-        [Required]
-        public required string DrInBed { get; set; }
+        public string? DrInBed { get; set; }
 
-        [Required]
-        public string Status { get; set; }
+        public string ?Status { get; set; }
 
-        [Required]
-        public DateTime StatusTime { get; set; }
+        public DateTime ?StatusTime { get; set; }
 
         public string? Note { get; set; }
 
         [Required]
-        public string DoseInstruction { get; set; }
+        public string? DoseInstruction { get; set; }
 
         [Required]
-        public string authoredTime { get; set; }
+        public string? authoredTime { get; set; }
 
         [Required]
         [ForeignKey("MedicationKnowledge")]
-        public string MedicationId { get; set; }
+        public string? MedicationId { get; set; }
 
         [JsonIgnore]
         public virtual Order? Order { get; set; }
 
-        public virtual MedicationKnowledge MedicationKnowledge { get; set; }
+        public virtual MedicationKnowledge? MedicationKnowledge { get; set; }
 
     }
 }

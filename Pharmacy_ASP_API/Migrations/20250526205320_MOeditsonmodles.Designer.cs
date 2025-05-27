@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pharmacy_ASP_API.Models;
 
@@ -10,9 +11,11 @@ using Pharmacy_ASP_API.Models;
 namespace Pharmacy_ASP_API.Migrations
 {
     [DbContext(typeof(PharmacyDbContext))]
-    partial class PharmacyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250526205320_MOeditsonmodles")]
+    partial class MOeditsonmodles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,15 +113,17 @@ namespace Pharmacy_ASP_API.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("MedicationId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("MedicationRequestId")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<DateTime?>("OrderTime")
+                    b.Property<DateTime>("OrderTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("PatientId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<int?>("Quantity")
@@ -239,7 +244,8 @@ namespace Pharmacy_ASP_API.Migrations
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationKnowledge", "Medication")
                         .WithMany("Orders")
                         .HasForeignKey("MedicationId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.MedicationRequest", "MedicationRequest")
                         .WithOne("Order")
@@ -249,7 +255,8 @@ namespace Pharmacy_ASP_API.Migrations
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.Patient", "Patient")
                         .WithMany("Orders")
                         .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Pharmacy_ASP_API.Models.Entities.Report", "Report")
                         .WithMany("Orders")
